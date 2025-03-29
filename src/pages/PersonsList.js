@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import PropTypes from 'prop-types';
 import {
   Box,
   Paper,
@@ -19,7 +20,6 @@ import {
   TableCell,
   TablePagination,
   TableSortLabel,
-  FormControlLabel,
   Switch
 } from '@mui/material';
 import {
@@ -35,7 +35,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment-jalaali';
 import Swal from 'sweetalert2';
-import { samplePersons } from '../data/samplePersons';
 import './PersonsList.css';
 
 // تابع مرتب‌سازی
@@ -82,7 +81,7 @@ const columns = [
   { id: 'membershipDate', label: 'تاریخ عضویت', minWidth: 120 }
 ];
 
-function PersonsList() {
+function PersonsList({ persons, deletePerson, updatePerson }) {
   const navigate = useNavigate();
   const [tab, setTab] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -92,14 +91,11 @@ function PersonsList() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [anchorEl, setAnchorEl] = useState(null);
   const [contextMenu, setContextMenu] = useState(null);
-  const [filterAnchorEl, setFilterAnchorEl] = useState(null);
-  const [filters, setFilters] = useState({});
 
   // فیلتر کردن داده‌ها بر اساس تب فعال
   const filteredData = useMemo(() => {
-    let data = [...samplePersons];
+    let data = [...persons];
     
-    // اعمال فیلتر تب‌ها
     switch(tab) {
       case 1: // مشتریان
         data = data.filter(person => person.isCustomer);
@@ -118,7 +114,7 @@ function PersonsList() {
     }
 
     return data;
-  }, [tab]);
+  }, [tab, persons]);
 
   // مرتب‌سازی شده و صفحه‌بندی شده
   const visibleRows = useMemo(() => {
@@ -199,7 +195,7 @@ function PersonsList() {
 
   // توابع عملیاتی
   const handleNew = () => {
-    navigate('/persons/new');
+    navigate('/new-person');
   };
 
   const handleEdit = () => {
@@ -212,7 +208,7 @@ function PersonsList() {
       });
       return;
     }
-    navigate(`/persons/edit/${selected[0]}`);
+    navigate(`/new-person?id=${selected[0]}`);
   };
 
   const handleDelete = async () => {
@@ -236,16 +232,47 @@ function PersonsList() {
     });
 
     if (result.isConfirmed) {
-      // اینجا عملیات حذف انجام می‌شود
+      try {
+        selected.forEach(id => deletePerson(id));
+        setSelected([]);
+        Swal.fire({
+          icon: 'success',
+          title: 'عملیات موفق',
+          text: `${selected.length} مورد با موفقیت حذف شد`,
+          confirmButtonText: 'تایید',
+          timer: 2000,
+          timerProgressBar: true
+        });
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'خطا',
+          text: 'عملیات حذف با خطا مواجه شد',
+          confirmButtonText: 'تایید'
+        });
+      }
+    }
+  };
+
+  const handleToggleActive = async (id, currentStatus) => {
+    try {
+      await updatePerson({ id, isActive: !currentStatus });
       Swal.fire({
         icon: 'success',
-        title: 'عملیات موفق',
-        text: `${selected.length} مورد با موفقیت حذف شد`,
-        confirmButtonText: 'تایید',
-        timer: 2000,
+        title: 'وضعیت با موفقیت تغییر کرد',
+        toast: true,
+        position: 'bottom-start',
+        showConfirmButton: false,
+        timer: 3000,
         timerProgressBar: true
       });
-      setSelected([]);
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'خطا در تغییر وضعیت',
+        text: error.message,
+        confirmButtonText: 'تایید'
+      });
     }
   };
 
@@ -256,6 +283,9 @@ function PersonsList() {
         <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2, borderBottom: 1, borderColor: 'divider' }}>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             اشخاص
+          </Typography>
+          <Typography variant="caption" color="textSecondary">
+            آخرین بروزرسانی: {moment("2025-03-29 23:04:53").format('jYYYY/jMM/jDD HH:mm:ss')}
           </Typography>
           <Tooltip title="بازگشت">
             <IconButton onClick={() => navigate(-1)}>
@@ -302,15 +332,15 @@ function PersonsList() {
           scrollButtons="auto"
           sx={{ px: 2, borderBottom: 1, borderColor: 'divider' }}
         >
-          <Tab label="همه" />
-          <Tab label="مشتریان" />
-          <Tab label="تامین کنندگان" />
-          <Tab label="کارمندان" />
-          <Tab label="بدون تراکنش" />
+          <Tab label={`همه (${persons.length})`} />
+          <Tab label={`مشتریان (${persons.filter(p => p.isCustomer).length})`} />
+          <Tab label={`تامین کنندگان (${persons.filter(p => p.isSupplier).length})`} />
+          <Tab label={`کارمندان (${persons.filter(p => p.isEmployee).length})`} />
+          <Tab label="بدون تراکنش (0)" />
         </Tabs>
 
         {/* جدول */}
-        <TableContainer sx={{ maxHeight: 'calc(100vh - 250px)' }}>
+        <TableContainer sx={{ maxHeight: 'calc(100vh - 250px)' }} onContextMenu={handleContextMenu}>
           <Table stickyHeader size="small">
             <TableHead>
               <TableRow>
@@ -363,7 +393,7 @@ function PersonsList() {
                         variant="text"
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigate(`/persons/${row.id}`);
+                          navigate(`/new-person?id=${row.id}`);
                         }}
                       >
                         {row.nickname}
@@ -383,7 +413,10 @@ function PersonsList() {
                       <Switch
                         checked={row.isActive}
                         size="small"
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleActive(row.id, row.isActive);
+                        }}
                       />
                     </TableCell>
                     <TableCell>
@@ -398,8 +431,7 @@ function PersonsList() {
             </TableBody>
           </Table>
         </TableContainer>
-
-        {/* پاورقی جدول */}
+            {/* پاورقی جدول */}
         <TablePagination
           rowsPerPageOptions={[5, 10, 15, 20, 30, 50, 100]}
           component="div"
@@ -410,7 +442,7 @@ function PersonsList() {
           onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage="تعداد در صفحه:"
           labelDisplayedRows={({ from, to, count }) => 
-            `${from}-${to} از ${count}`
+            `${from}-${to} از ${count} مورد`
           }
         />
       </Paper>
@@ -420,17 +452,19 @@ function PersonsList() {
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuItem onClick={handleMenuClose}>
-          <FilterList sx={{ mr: 1 }} />
+          <FilterList sx={{ ml: 1 }} />
           حذف فیلتر
         </MenuItem>
         <MenuItem onClick={handleMenuClose}>
-          <ContentCopy sx={{ mr: 1 }} />
+          <ContentCopy sx={{ ml: 1 }} />
           کپی
         </MenuItem>
         <MenuItem onClick={handleMenuClose}>
-          <Refresh sx={{ mr: 1 }} />
+          <Refresh sx={{ ml: 1 }} />
           بازسازی قالب
         </MenuItem>
       </Menu>
@@ -453,9 +487,44 @@ function PersonsList() {
         <MenuItem onClick={handleContextMenuClose}>انتخاب</MenuItem>
         <MenuItem onClick={handleContextMenuClose}>کپی</MenuItem>
       </Menu>
+
+      {/* پیام‌های خطا و موفقیت */}
+      <div id="toast-container"></div>
     </Box>
   );
 }
 
-export default PersonsList;
+PersonsList.propTypes = {
+  persons: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      code: PropTypes.string,
+      category: PropTypes.string,
+      nickname: PropTypes.string,
+      company: PropTypes.string,
+      country: PropTypes.string,
+      province: PropTypes.string,
+      city: PropTypes.string,
+      mobile: PropTypes.string,
+      phone: PropTypes.string,
+      email: PropTypes.string,
+      nationalId: PropTypes.string,
+      economicCode: PropTypes.string,
+      registrationNumber: PropTypes.string,
+      isActive: PropTypes.bool,
+      birthDate: PropTypes.string,
+      membershipDate: PropTypes.string,
+      isCustomer: PropTypes.bool,
+      isSupplier: PropTypes.bool,
+      isEmployee: PropTypes.bool
+    })
+  ).isRequired,
+  deletePerson: PropTypes.func.isRequired,
+  updatePerson: PropTypes.func.isRequired
+};
 
+PersonsList.defaultProps = {
+  persons: []
+};
+
+export default PersonsList;
