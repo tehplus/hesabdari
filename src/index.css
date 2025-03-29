@@ -1,0 +1,7 @@
+/* استفاده از CDN */
+@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+
+body {
+  margin: 0;
+  font-family: 'Vazir', sans-serif;
+}

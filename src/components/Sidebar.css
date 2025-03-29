@@ -1,0 +1,44 @@
+.sidebar-header {
+  padding: 20px;
+  text-align: center;
+  background-color: #1976d2;
+  color: white;
+}
+
+.MuiDrawer-paper {
+  width: 280px;
+  background-color: #fff;
+  border-left: 1px solid #ddd;
+}
+
+.MuiListItem-root {
+  padding-right: 16px;
+}
+
+.MuiListItem-root:hover {
+  background-color: #f0f0f0;
+}
+.sidebar {
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100vh;
+  background-color: #fff;
+  border-left: 1px solid #ddd;
+  z-index: 1200;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  padding: 20px;
+  text-align: center;
+  background-color: #1976d2;
+  color: white;
+}
+
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}

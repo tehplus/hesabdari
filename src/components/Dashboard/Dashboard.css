@@ -1,0 +1,99 @@
+.dashboard-container {
+  padding: 20px;
+  direction: rtl;
+}
+
+.dashboard-header {
+  margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+  font-size: 24px;
+  color: #333;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.chart-container {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.sales-chart {
+  grid-column: 1 / -1;
+}
+
+.info-cards {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.info-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.info-card h3 {
+  color: #666;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.info-card .amount {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin: 10px 0;
+}
+
+.info-card .change {
+  font-size: 14px;
+}
+
+.info-card .change.positive {
+  color: #4CAF50;
+}
+
+.info-card .change.negative {
+  color: #F15B46;
+}
+
+.currency-rates {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rate {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.rate span:first-child {
+  color: #666;
+}
+
+.rate span:last-child {
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .info-cards {
+    grid-template-columns: 1fr;
+  }
+}

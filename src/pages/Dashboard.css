@@ -1,0 +1,22 @@
+.dashboard {
+  padding: 24px;
+}
+
+.dashboard-card {
+  padding: 16px;
+  text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.dashboard-chart {
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+/* استایل‌های فارسی‌سازی */
+.apexcharts-text tspan {
+  font-family: vazir, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
