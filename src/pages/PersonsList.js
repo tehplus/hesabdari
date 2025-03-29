@@ -125,6 +125,7 @@ function PersonsList() {
     return stableSort(filteredData, getComparator(order, orderBy))
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   }, [filteredData, order, orderBy, page, rowsPerPage]);
+
   // توابع مدیریت رویدادها
   const handleTabChange = (event, newValue) => {
     setTab(newValue);
@@ -457,3 +458,4 @@ function PersonsList() {
 }
 
 export default PersonsList;
+
