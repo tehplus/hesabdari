@@ -10,39 +10,8 @@ import Receipts from './pages/Receipts';
 import ReceiptsList from './pages/ReceiptsList';
 import Payments from './pages/Payments';
 import './App.css';
-import rtlPlugin from 'stylis-plugin-rtl';
-import { CacheProvider } from '@emotion/react';
-import createCache from '@emotion/cache';
-import { prefixer } from 'stylis';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-
 
 function App() {
-  // Create rtl cache
-const cacheRtl = createCache({
-  key: 'muirtl',
-  stylisPlugins: [prefixer, rtlPlugin],
-});
-
-// Create RTL theme
-const theme = createTheme({
-  direction: 'rtl',
-  typography: {
-    fontFamily: 'Vazir, Tahoma, Arial',
-  },
-});
-
-function App() {
-  return (
-    <CacheProvider value={cacheRtl}>
-      <ThemeProvider theme={theme}>
-        <div dir="rtl">
-          {/* محتوای برنامه */}
-        </div>
-      </ThemeProvider>
-    </CacheProvider>
-  );
-}
   const [persons, setPersons] = useState([
     { id: 1, name: 'علی محمدی', phone: '09123456789', balance: '2500000', type: 'مشتری' },
     { id: 2, name: 'رضا حسینی', phone: '09351234567', balance: '-1200000', type: 'تامین‌کننده' },
@@ -90,84 +59,16 @@ function App() {
       <div className="App">
         <Sidebar />
         <main className="main-content">
-          <div className="content-wrapper">
-            <Routes>
-              <Route 
-                path="/" 
-                element={
-                  <Dashboard 
-                    persons={persons} 
-                    invoices={invoices} 
-                    receipts={receipts} 
-                    payments={payments} 
-                  />
-                } 
-              />
-              <Route 
-                path="/persons-list" 
-                element={
-                  <PersonsList 
-                    persons={persons} 
-                    deletePerson={deletePerson} 
-                    updatePerson={updatePerson} 
-                  />
-                } 
-              />
-              <Route 
-                path="/new-person" 
-                element={
-                  <NewPerson 
-                    addPerson={addPerson} 
-                  />
-                } 
-              />
-              <Route 
-                path="/new-sale" 
-                element={
-                  <NewSale 
-                    persons={persons} 
-                    addInvoice={addInvoice} 
-                  />
-                } 
-              />
-              <Route 
-                path="/sales-invoices" 
-                element={
-                  <SalesInvoices 
-                    invoices={invoices} 
-                    persons={persons} 
-                  />
-                } 
-              />
-              <Route 
-                path="/receipts" 
-                element={
-                  <Receipts 
-                    persons={persons} 
-                    addReceipt={addReceipt} 
-                  />
-                } 
-              />
-              <Route 
-                path="/receipts-list" 
-                element={
-                  <ReceiptsList 
-                    receipts={receipts} 
-                    persons={persons} 
-                  />
-                } 
-              />
-              <Route 
-                path="/payments" 
-                element={
-                  <Payments 
-                    persons={persons} 
-                    addPayment={addPayment} 
-                  />
-                } 
-              />
-            </Routes>
-          </div>
+          <Routes>
+            <Route path="/" element={<Dashboard persons={persons} invoices={invoices} receipts={receipts} payments={payments} />} />
+            <Route path="/persons-list" element={<PersonsList persons={persons} deletePerson={deletePerson} updatePerson={updatePerson} />} />
+            <Route path="/new-person" element={<NewPerson addPerson={addPerson} />} />
+            <Route path="/new-sale" element={<NewSale persons={persons} addInvoice={addInvoice} />} />
+            <Route path="/sales-invoices" element={<SalesInvoices invoices={invoices} persons={persons} />} />
+            <Route path="/receipts" element={<Receipts persons={persons} addReceipt={addReceipt} />} />
+            <Route path="/receipts-list" element={<ReceiptsList receipts={receipts} persons={persons} />} />
+            <Route path="/payments" element={<Payments persons={persons} addPayment={addPayment} />} />
+          </Routes>
         </main>
       </div>
     </Router>
