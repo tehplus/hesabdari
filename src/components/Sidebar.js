@@ -40,7 +40,7 @@ function Sidebar() {
       icon: <People />, 
       subItems: [
         { text: 'شخص جدید', link: '/new-person' },
-        { text: 'اشخاص', link: '/persons' },
+        { text: 'اشخاص', link: '/persons-list' },
         { text: 'دریافت', link: '/person-receipt' },
         { text: 'لیست دریافت ها', link: '/person-receipts-list' },
         { text: 'پرداخت', link: '/person-payment' },

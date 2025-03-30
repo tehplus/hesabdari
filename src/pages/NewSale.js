@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Typography, Box, TextField, Button, MenuItem, Grid, Table, TableBody, TableCell, TableRow, TableHead } from '@mui/material';
-import './NewSale.css';
+import '../assets/css/NewSale.css';
 
 function NewSale({ persons, addInvoice }) {
   const navigate = useNavigate();

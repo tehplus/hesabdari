@@ -237,7 +237,7 @@ const handleSubmit = async (event) => {
       timerProgressBar: true
     });
     
-    navigate('/persons');
+    navigate('/persons-list');
   } catch (err) {
     Swal.fire({
       icon: 'error',
@@ -927,7 +927,7 @@ const handleSubmit = async (event) => {
           <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
             <Button
               variant="outlined"
-              onClick={() => navigate('/persons')}
+              onClick={() => navigate('/persons-list')}
               disabled={loading}
               startIcon={<Cancel />}
             >

@@ -10,7 +10,7 @@ import Receipts from './pages/Receipts';
 import ReceiptsList from './pages/ReceiptsList';
 import Payments from './pages/Payments';
 import './App.css';
-
+import Receipt from './pages/Receipt'; // اضافه کردن import
 function App() {
   const [persons, setPersons] = useState([
     {
@@ -203,7 +203,7 @@ function App() {
               } 
             />
             <Route 
-              path="/persons" 
+              path="/persons-list" 
               element={
                 <PersonsList 
                   persons={persons} 
@@ -249,6 +249,7 @@ function App() {
                 />
               } 
             />
+            
             <Route 
               path="/receipts-list" 
               element={

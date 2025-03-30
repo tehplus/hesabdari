@@ -1,0 +1,33 @@
+.receipt-form {
+  direction: rtl;
+}
+
+.receipt-form .MuiTextField-root {
+  margin: 8px;
+}
+
+.receipt-form .MuiButton-root {
+  margin: 4px;
+}
+
+.receipt-item {
+  border-bottom: 1px solid #eee;
+  padding: 16px 0;
+}
+
+.receipt-total {
+  font-weight: bold;
+  color: #1976d2;
+}
+
+.receipt-remaining {
+  font-weight: bold;
+  color: #d32f2f;
+}
+
+/* RTL support for number inputs */
+.receipt-form input[type="number"],
+.receipt-form input[type="tel"] {
+  direction: ltr;
+  text-align: left;
+}
