@@ -1,17 +1,17 @@
+import '../assets/css/Payments.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../assets/css/Payments.css';
-import {
-  Box,
-  Paper,
-  Typography,
-  Button,
-  IconButton,
-  TextField,
+import { 
+  Typography, 
+  Box, 
+  TextField, 
+  Button, 
+  MenuItem, 
   Grid,
+  IconButton,
+  Paper,
   Switch,
   FormControlLabel,
-  MenuItem,
   InputAdornment
 } from '@mui/material';
 import {
@@ -21,20 +21,18 @@ import {
   FileCopy as CopyIcon,
   Delete as DeleteIcon
 } from '@mui/icons-material';
-import ProjectDialog from '../components/ProjectDialog';
 import './Payments.css';
 
 function Payments({ persons, addPayment }) {
   const navigate = useNavigate();
   const [isAutoNumber, setIsAutoNumber] = useState(true);
-  const [projectDialogOpen, setProjectDialogOpen] = useState(false);
-
   const [formData, setFormData] = useState({
     paymentNumber: '1000',
+    person: '',
+    amount: '',
     date: new Date().toISOString().split('T')[0],
-    project: '',
     description: '',
-    currency: 'IRR'
+    project: '',
   });
 
   const [paymentItems, setPaymentItems] = useState([{
@@ -49,18 +47,12 @@ function Payments({ persons, addPayment }) {
     { id: 2, name: 'پروژه 2' }
   ]);
 
-  const handleAutoNumberChange = (event) => {
-    setIsAutoNumber(event.target.checked);
-  };
-
-  const handleAddProject = (projectData) => {
-    // Handle adding new project
-    console.log('New project:', projectData);
-    setProjectDialogOpen(false);
-  };
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleAutoNumberChange = (event) => {
+    setIsAutoNumber(event.target.checked);
   };
 
   const handleItemChange = (id, field, value) => {
@@ -114,7 +106,7 @@ function Payments({ persons, addPayment }) {
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Button
-            startIcon={<FileCopy />}
+            startIcon={<CopyIcon />}
             variant="outlined"
             sx={{ mx: 1 }}
           >
@@ -179,25 +171,20 @@ function Payments({ persons, addPayment }) {
           </Grid>
 
           <Grid item xs={12} md={3}>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField
-                select
-                label="پروژه"
-                name="project"
-                value={formData.project}
-                onChange={handleChange}
-                fullWidth
-              >
-                {projects.map((project) => (
-                  <MenuItem key={project.id} value={project.id}>
-                    {project.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <IconButton color="primary" onClick={() => setProjectDialogOpen(true)}>
-                <AddIcon />
-              </IconButton>
-            </Box>
+            <TextField
+              select
+              label="پروژه"
+              name="project"
+              value={formData.project}
+              onChange={handleChange}
+              fullWidth
+            >
+              {projects.map((project) => (
+                <MenuItem key={project.id} value={project.id}>
+                  {project.name}
+                </MenuItem>
+              ))}
+            </TextField>
           </Grid>
 
           <Grid item xs={12} md={3}>
@@ -285,13 +272,6 @@ function Payments({ persons, addPayment }) {
           </Grid>
         </Grid>
       </Paper>
-
-      {/* Project Dialog */}
-      <ProjectDialog
-        open={projectDialogOpen}
-        handleClose={() => setProjectDialogOpen(false)}
-        onSave={handleAddProject}
-      />
     </Box>
   );
 }

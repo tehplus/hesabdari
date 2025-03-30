@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   List, 
   ListItemButton, 
@@ -25,10 +25,30 @@ import {
 import './Sidebar.css';
 
 function Sidebar() {
-  // تغییر ساختار state از آبجکت به یک string برای نگهداری فقط منوی فعال
+  const location = useLocation();
   const [openMenu, setOpenMenu] = useState('');
 
-  // تغییر تابع handleClick برای مدیریت منوی فعال
+  // پیدا کردن منوی والد برای مسیر فعلی
+  const findParentMenu = (currentPath) => {
+    for (const item of menuItems) {
+      if (item.subItems) {
+        const subItem = item.subItems.find(sub => sub.link === currentPath);
+        if (subItem) {
+          return item.text;
+        }
+      }
+    }
+    return '';
+  };
+
+  // باز کردن منوی مربوط به صفحه فعلی به صورت خودکار
+  useEffect(() => {
+    const parentMenu = findParentMenu(location.pathname);
+    if (parentMenu) {
+      setOpenMenu(parentMenu);
+    }
+  }, [location.pathname]);
+
   const handleClick = (menuName) => {
     setOpenMenu(openMenu === menuName ? '' : menuName);
   };
@@ -43,8 +63,8 @@ function Sidebar() {
         { text: 'اشخاص', link: '/persons-list' },
         { text: 'دریافت', link: '/receipts' },
         { text: 'لیست دریافت ها', link: '/receipts-list' },
-        { text: 'پرداخت', link: '/person-payment' },
-        { text: 'لیست پرداخت ها', link: '/person-payments-list' },
+        { text: 'پرداخت', link: '/payments' },
+        { text: 'لیست پرداخت ها', link: '/payments-list' },
         { text: 'سهامداران', link: '/shareholders' },
         { text: 'فروشندگان', link: '/vendors' }
       ] 
@@ -185,12 +205,35 @@ function Sidebar() {
         {menuItems.map((item) => (
           <div key={item.text}>
             {item.link ? (
-              <ListItemButton component={Link} to={item.link}>
+              <ListItemButton
+                component={Link}
+                to={item.link}
+                selected={location.pathname === item.link}
+                sx={{
+                  '&.Mui-selected': {
+                    backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 152, 0, 0.2)',
+                    }
+                  }
+                }}
+              >
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.text} />
               </ListItemButton>
             ) : (
-              <ListItemButton onClick={() => handleClick(item.text)}>
+              <ListItemButton 
+                onClick={() => handleClick(item.text)}
+                selected={openMenu === item.text}
+                sx={{
+                  '&.Mui-selected': {
+                    backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 152, 0, 0.2)',
+                    }
+                  }
+                }}
+              >
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.text} />
                 {item.subItems && (openMenu === item.text ? <ExpandLess /> : <ExpandMore />)}
@@ -204,7 +247,16 @@ function Sidebar() {
                       key={subItem.text}
                       component={Link}
                       to={subItem.link}
-                      sx={{ pl: 4 }}
+                      selected={location.pathname === subItem.link}
+                      sx={{
+                        pl: 4,
+                        '&.Mui-selected': {
+                          backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255, 152, 0, 0.2)',
+                          }
+                        }
+                      }}
                     >
                       <ListItemText primary={subItem.text} />
                     </ListItemButton>
@@ -220,4 +272,3 @@ function Sidebar() {
 }
 
 export default Sidebar;
-
