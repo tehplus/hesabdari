@@ -42,7 +42,7 @@ function Sidebar() {
         { text: 'شخص جدید', link: '/new-person' },
         { text: 'اشخاص', link: '/persons-list' },
         { text: 'دریافت', link: '/receipts' },
-        { text: 'لیست دریافت ها', link: '/person-receipts-list' },
+        { text: 'لیست دریافت ها', link: '/receipts-list' },
         { text: 'پرداخت', link: '/person-payment' },
         { text: 'لیست پرداخت ها', link: '/person-payments-list' },
         { text: 'سهامداران', link: '/shareholders' },

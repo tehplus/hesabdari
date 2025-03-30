@@ -1,7 +1,45 @@
-.payments {
-  padding: 20px;
+.MuiTextField-root {
+  margin: 8px 0;
 }
 
-.MuiTextField-root {
-  margin-bottom: 20px;
+.payment-item {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: flex-start;
+}
+
+/* RTL adjustments */
+.MuiInputLabel-root {
+  right: 1.75rem !important;
+  left: auto !important;
+  transform-origin: right !important;
+}
+
+.MuiOutlinedInput-root {
+  direction: rtl;
+}
+
+/* LTR for numbers */
+input[type="number"] {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

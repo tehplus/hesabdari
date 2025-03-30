@@ -1,73 +1,30 @@
-.receipts-list {
-  padding: 20px;
-  direction: rtl;
+.MuiTableCell-root {
+  text-align: right !important;
 }
 
-.page-header {
-  display: flex;
-  align-items: center;
-  padding: 1rem;
-  background: #fff;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 1rem;
-}
-
-/* DevExtreme DataGrid customizations */
-.dx-datagrid {
-  background-color: white;
-  font-family: Tahoma, Arial, sans-serif;
-}
-
-.dx-datagrid-headers {
+.MuiTableCell-head {
   background-color: #f5f5f5;
+  font-weight: bold !important;
 }
 
-.dx-row-alt > td {
-  background-color: rgba(0, 0, 0, 0.02);
+.MuiTableRow-root:hover {
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
-.dx-datagrid-pager {
-  padding: 8px;
-  background-color: white;
+.MuiTableRow-root.Mui-selected,
+.MuiTableRow-root.Mui-selected:hover {
+  background-color: rgba(25, 118, 210, 0.08);
 }
 
-.dx-datagrid-search-panel {
-  margin: 0 0 8px 0;
+.MuiTablePagination-root {
+  direction: ltr;
 }
 
-/* Selection styles */
-.dx-datagrid-checkbox-size {
-  width: 20px;
-  height: 20px;
+.MuiTableSortLabel-root.Mui-active {
+  color: #1976d2;
 }
 
-/* Column header filters */
-.dx-datagrid-filter-row .dx-texteditor {
-  background-color: white;
-}
-
-/* Row hover effect */
-.dx-data-row:hover {
-  background-color: rgba(255, 152, 0, 0.1);
-}
-
-/* Selected row */
-.dx-selection {
-  background-color: rgba(255, 152, 0, 0.2) !important;
-}
-
-/* Tab customization */
-.MuiTab-root {
-  min-height: 48px;
-}
-
-.MuiTab-root.Mui-selected {
-  background-color: #fff3e0;
-  border-bottom: 2px solid #ff9800;
-}
-
-/* RTL specific adjustments */
-.dx-rtl .dx-datagrid-rowsview .dx-selection,
-.dx-rtl .dx-datagrid-rowsview .dx-selection > td {
-  text-align: right;
+.MuiTablePagination-selectLabel,
+.MuiTablePagination-displayedRows {
+  margin: 0;
 }

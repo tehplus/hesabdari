@@ -25,7 +25,7 @@ function ProjectDialog({ open, handleClose, onSave }) {
   };
 
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={handleClose} dir="rtl">
       <DialogTitle>افزودن پروژه جدید</DialogTitle>
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 400, pt: 2 }}>

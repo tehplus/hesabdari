@@ -1,15 +1,27 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../assets/css/ReceiptsList.css';
 import {
   Box,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TablePagination,
   IconButton,
+  Button,
   Typography,
   Tabs,
   Tab,
-  Button,
   Menu,
   MenuItem,
-  Popover
+  Checkbox,
+  TableSortLabel,
+  Toolbar,
+  Tooltip
 } from '@mui/material';
 import {
   ArrowBack,
@@ -22,210 +34,234 @@ import {
   Print,
   GetApp
 } from '@mui/icons-material';
-import DataGrid, {
-  Column,
-  Selection,
-  FilterRow,
-  HeaderFilter,
-  Sorting,
-  Paging,
-  Pager,
-  Export,
-  ColumnChooser
-} from 'devextreme-react/data-grid';
-import 'devextreme/dist/css/dx.material.orange.light.css';
-import './ReceiptsList.css';
 
 function ReceiptsList({ receipts, persons }) {
   const navigate = useNavigate();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selected, setSelected] = useState([]);
   const [currentTab, setCurrentTab] = useState(0);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [orderBy, setOrderBy] = useState('id');
+  const [order, setOrder] = useState('asc');
   const [moreAnchorEl, setMoreAnchorEl] = useState(null);
 
-  // تنظیمات DataGrid
-  const dataGridOptions = {
-    rtlEnabled: true,
-    showBorders: true,
-    columnAutoWidth: true,
-    allowColumnResizing: true,
-    rowAlternationEnabled: true,
-    hoverStateEnabled: true
+  // مدیریت مرتب‌سازی
+  const handleRequestSort = (property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
   };
 
-  // تنظیمات Pager
-  const pagerOptions = {
-    showPageSizeSelector: true,
-    allowedPageSizes: [5, 10, 20, 50, 100],
-    showInfo: true
+  // مرتب‌سازی داده‌ها
+  const sortedReceipts = receipts.sort((a, b) => {
+    if (order === 'asc') {
+      return a[orderBy] < b[orderBy] ? -1 : 1;
+    } else {
+      return b[orderBy] < a[orderBy] ? -1 : 1;
+    }
+  });
+
+  // مدیریت انتخاب سطرها
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      setSelected(receipts.map(n => n.id));
+      return;
+    }
+    setSelected([]);
   };
 
-  const handleTabChange = (event, newValue) => {
-    setCurrentTab(newValue);
+  const handleClick = (id) => {
+    const selectedIndex = selected.indexOf(id);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+
+    setSelected(newSelected);
   };
 
-  const handleMoreClick = (event) => {
-    setMoreAnchorEl(event.currentTarget);
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
   };
 
-  const handleMoreClose = () => {
-    setMoreAnchorEl(null);
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
-  const handleSelectionChanged = (e) => {
-    setSelectedRowKeys(e.selectedRowKeys);
-  };
+  const isSelected = (id) => selected.indexOf(id) !== -1;
 
-  const handleExportToExcel = () => {
-    // پیاده‌سازی خروجی اکسل
-    console.log('Exporting to Excel...');
-  };
-
-  const handlePrint = () => {
-    // پیاده‌سازی چاپ
-    console.log('Printing...');
-  };
-
-  const handleDelete = () => {
-    if (selectedRowKeys.length === 0) return;
-    // پیاده‌سازی حذف
-    console.log('Deleting items:', selectedRowKeys);
-  };
-
-  const formatCurrency = (data) => {
+  const formatCurrency = (amount) => {
     return new Intl.NumberFormat('fa-IR', {
       style: 'currency',
       currency: 'IRR'
-    }).format(data.value);
-  };
-
-  const formatDate = (data) => {
-    return new Date(data.value).toLocaleDateString('fa-IR');
+    }).format(amount);
   };
 
   return (
-    <Box className="receipts-list">
-      {/* هدر */}
-      <Box className="page-header">
-        <IconButton onClick={() => navigate(-1)}>
-          <ArrowBack />
-        </IconButton>
-        <Typography variant="h5" sx={{ mx: 2 }}>
-          لیست دریافت‌ها
-        </Typography>
-        <Box sx={{ flexGrow: 1 }} />
-        <IconButton onClick={handleMoreClick}>
-          <MoreVert />
-        </IconButton>
-        <Button
-          variant="contained"
-          color="warning"
-          startIcon={<Visibility />}
-          sx={{ mx: 1 }}
-        >
-          نمایش
-        </Button>
-        <Button
-          variant="contained"
-          color="success"
-          startIcon={<NoteAdd />}
-          onClick={() => navigate('/receipts')}
-          sx={{ mx: 1 }}
-        >
-          جدید
-        </Button>
-        <Button
-          variant="outlined"
-          startIcon={<Edit />}
-          disabled={selectedRowKeys.length !== 1}
-          sx={{ mx: 1 }}
-        >
-          ویرایش
-        </Button>
-        <Button
-          variant="contained"
-          color="error"
-          startIcon={<Delete />}
-          disabled={selectedRowKeys.length === 0}
-          onClick={handleDelete}
-        >
-          حذف
-        </Button>
-      </Box>
-
-      {/* تب‌ها */}
-      <Tabs value={currentTab} onChange={handleTabChange} sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tab label="همه" />
-        <Tab label="آیتم‌ها" />
-      </Tabs>
-
-      {/* جدول */}
-      <DataGrid
-        {...dataGridOptions}
-        dataSource={receipts}
-        onSelectionChanged={handleSelectionChanged}
-        selectedRowKeys={selectedRowKeys}
-      >
-        <Selection mode="multiple" showCheckBoxesMode="always" />
-        <FilterRow visible={true} />
-        <HeaderFilter visible={true} />
-        <Sorting mode="multiple" />
-        <Paging defaultPageSize={10} />
-        <Pager {...pagerOptions} />
-        <Export enabled={true} />
-        <ColumnChooser enabled={true} />
-
-        <Column type="selection" />
-        <Column
-          dataField="id"
-          caption="شماره"
-          cellRender={({ data }) => (
+    <Box sx={{ p: 3 }}>
+      <Paper sx={{ width: '100%', mb: 2 }}>
+        {/* هدر */}
+        <Toolbar sx={{ px: 2, display: 'flex', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton onClick={() => navigate(-1)}>
+              <ArrowBack />
+            </IconButton>
+            <Typography variant="h6" sx={{ ml: 2 }}>
+              لیست دریافت‌ها
+            </Typography>
+          </Box>
+          
+          <Box>
+            <IconButton onClick={(e) => setMoreAnchorEl(e.currentTarget)}>
+              <MoreVert />
+            </IconButton>
             <Button
-              variant="text"
-              onClick={() => navigate(`/receipts/${data.id}`)}
+              startIcon={<Visibility />}
+              variant="contained"
+              color="warning"
+              sx={{ mx: 1 }}
             >
-              {data.id}
+              نمایش
             </Button>
-          )}
+            <Button
+              startIcon={<NoteAdd />}
+              variant="contained"
+              color="success"
+              onClick={() => navigate('/receipts')}
+              sx={{ mx: 1 }}
+            >
+              جدید
+            </Button>
+            <Button
+              startIcon={<Edit />}
+              variant="outlined"
+              disabled={selected.length !== 1}
+              sx={{ mx: 1 }}
+            >
+              ویرایش
+            </Button>
+            <Button
+              startIcon={<Delete />}
+              variant="contained"
+              color="error"
+              disabled={selected.length === 0}
+            >
+              حذف
+            </Button>
+          </Box>
+        </Toolbar>
+
+        {/* تب‌ها */}
+        <Tabs
+          value={currentTab}
+          onChange={(e, newValue) => setCurrentTab(newValue)}
+          sx={{ borderBottom: 1, borderColor: 'divider' }}
+        >
+          <Tab label="همه" />
+          <Tab label="آیتم‌ها" />
+        </Tabs>
+
+        {/* جدول */}
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    indeterminate={selected.length > 0 && selected.length < receipts.length}
+                    checked={receipts.length > 0 && selected.length === receipts.length}
+                    onChange={handleSelectAllClick}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={orderBy === 'id'}
+                    direction={orderBy === 'id' ? order : 'asc'}
+                    onClick={() => handleRequestSort('id')}
+                  >
+                    شماره
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>شخص</TableCell>
+                <TableCell>مبلغ</TableCell>
+                <TableCell>تاریخ</TableCell>
+                <TableCell>شرح</TableCell>
+                <TableCell>پروژه</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {sortedReceipts
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((receipt) => {
+                  const isItemSelected = isSelected(receipt.id);
+                  const person = persons.find(p => p.id === receipt.person);
+
+                  return (
+                    <TableRow
+                      hover
+                      onClick={() => handleClick(receipt.id)}
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={receipt.id}
+                      selected={isItemSelected}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox checked={isItemSelected} />
+                      </TableCell>
+                      <TableCell>{receipt.id}</TableCell>
+                      <TableCell>{person?.name || '-'}</TableCell>
+                      <TableCell>{formatCurrency(receipt.amount)}</TableCell>
+                      <TableCell>{receipt.date}</TableCell>
+                      <TableCell>{receipt.description || '-'}</TableCell>
+                      <TableCell>{receipt.project || '-'}</TableCell>
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        {/* پاجینیشن */}
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25, 50]}
+          component="div"
+          count={receipts.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          labelRowsPerPage="تعداد در صفحه:"
+          labelDisplayedRows={({ from, to, count }) =>
+            `${from}-${to} از ${count}`
+          }
         />
-        <Column
-          dataField="person"
-          caption="شخص"
-          lookup={{
-            dataSource: persons,
-            valueExpr: 'id',
-            displayExpr: 'name'
-          }}
-        />
-        <Column
-          dataField="amount"
-          caption="مبلغ"
-          dataType="number"
-          format="currency"
-          customizeText={formatCurrency}
-        />
-        <Column
-          dataField="date"
-          caption="تاریخ"
-          dataType="date"
-          customizeText={formatDate}
-        />
-        <Column dataField="description" caption="شرح" />
-        <Column dataField="project" caption="پروژه" />
-      </DataGrid>
+      </Paper>
 
       {/* منوی بیشتر */}
       <Menu
         anchorEl={moreAnchorEl}
         open={Boolean(moreAnchorEl)}
-        onClose={handleMoreClose}
+        onClose={() => setMoreAnchorEl(null)}
       >
-        <MenuItem onClick={() => { handleMoreClose(); }}>
+        <MenuItem onClick={() => setMoreAnchorEl(null)}>
           <FileCopy sx={{ mr: 1 }} /> کپی
         </MenuItem>
-        <MenuItem onClick={() => { handleMoreClose(); handlePrint(); }}>
+        <MenuItem onClick={() => setMoreAnchorEl(null)}>
           <Print sx={{ mr: 1 }} /> چاپ
         </MenuItem>
-        <MenuItem onClick={() => { handleMoreClose(); handleExportToExcel(); }}>
+        <MenuItem onClick={() => setMoreAnchorEl(null)}>
           <GetApp sx={{ mr: 1 }} /> خروجی اکسل
         </MenuItem>
       </Menu>
