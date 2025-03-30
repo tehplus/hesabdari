@@ -1,208 +1,240 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../assets/css/Receipts.css';
-import { 
-  Box,
-  Button,
-  Grid,
-  Typography,
-  IconButton,
-  Switch,
-  TextField,
-  Paper
-} from '@mui/material';
 import {
-  ArrowBack,
-  Add as AddIcon,
-  Save as SaveIcon,
-  Delete as DeleteIcon,
-  Assessment as AssessmentIcon
-} from '@mui/icons-material';
+  Typography,
+  Box,
+  TextField,
+  Button,
+  MenuItem,
+  Grid,
+  Switch,
+  IconButton,
+  FormControlLabel
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import ProjectDialog from '../components/ProjectDialog';
+import CurrencyDialog from '../components/CurrencyDialog';
+import './Receipts.css';
 
-function Receipt({ persons, addReceipt }) {
+function Receipts({ persons, addReceipt }) {
   const navigate = useNavigate();
+  const [receiptNumber, setReceiptNumber] = useState('1000');
+  const [isAutoNumber, setIsAutoNumber] = useState(true);
+  const [projectDialogOpen, setProjectDialogOpen] = useState(false);
+  const [currencyDialogOpen, setCurrencyDialogOpen] = useState(false);
+  
+  const [projects, setProjects] = useState([
+    { id: 1, name: 'پروژه 1', isDefault: true },
+    { id: 2, name: 'پروژه 2', isDefault: false }
+  ]);
+
+  const [currencies, setCurrencies] = useState([
+    { id: 1, name: 'ریال', symbol: 'IRR', rate: 1 },
+    { id: 2, name: 'تومان', symbol: 'IRT', rate: 0.1 }
+  ]);
+
   const [formData, setFormData] = useState({
     receiptNumber: '',
+    person: '',
+    amount: '',
     date: new Date().toISOString().split('T')[0],
-    project: '',
     description: '',
-    currency: 'IRR',
-    isAutoNumber: true
+    project: '',
+    currency: '1'  // Default to Rial
   });
 
-  const [items, setItems] = useState([{
-    id: 1,
-    person: '',
-    amount: 0,
-    description: ''
-  }]);
+  useEffect(() => {
+    if (isAutoNumber) {
+      setFormData(prev => ({ ...prev, receiptNumber }));
+    }
+  }, [receiptNumber, isAutoNumber]);
 
-  const handleAddItem = () => {
-    setItems([...items, {
-      id: items.length + 1,
-      person: '',
-      amount: 0,
-      description: ''
-    }]);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleRemoveItem = (id) => {
-    setItems(items.filter(item => item.id !== id));
+  const handleAutoNumberChange = (e) => {
+    setIsAutoNumber(e.target.checked);
+    if (e.target.checked) {
+      setFormData(prev => ({ ...prev, receiptNumber }));
+    }
   };
 
-  const handleItemChange = (id, field, value) => {
-    setItems(items.map(item => 
-      item.id === id ? { ...item, [field]: value } : item
-    ));
+  const handleAddProject = (projectData) => {
+    const newProject = {
+      id: projects.length + 1,
+      ...projectData
+    };
+    setProjects([...projects, newProject]);
+    if (projectData.isDefault) {
+      setFormData(prev => ({ ...prev, project: newProject.id }));
+    }
   };
 
-  const getTotalAmount = () => {
-    return items.reduce((sum, item) => sum + Number(item.amount), 0);
+  const handleAddCurrency = (currencyData) => {
+    const newCurrency = {
+      id: currencies.length + 1,
+      ...currencyData
+    };
+    setCurrencies([...currencies, newCurrency]);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Implement form submission logic here
-    console.log('Form submitted:', { ...formData, items });
+    addReceipt(formData);
+    // Increment receipt number for next use
+    setReceiptNumber(prev => String(Number(prev) + 1));
+    navigate('/receipts-list');
   };
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Paper elevation={3} sx={{ p: 2 }}>
-        {/* Header */}
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-          <IconButton onClick={() => navigate(-1)}>
-            <ArrowBack />
-          </IconButton>
-          <Typography variant="h5" sx={{ mr: 2 }}>
-            دریافت
-          </Typography>
-          <Box sx={{ flexGrow: 1 }} />
-          <Button
-            startIcon={<AssessmentIcon />}
-            sx={{ mx: 1 }}
-            disabled
-          >
-            راس‌گیری
-          </Button>
-          <Button
-            variant="contained"
-            color="warning"
-            startIcon={<AddIcon />}
-            sx={{ mx: 1 }}
-          >
-            جدید
-          </Button>
-          <Button
-            variant="contained"
-            color="success"
-            startIcon={<SaveIcon />}
-            onClick={handleSubmit}
-          >
-            ذخیره
-          </Button>
-        </Box>
-
-        {/* Main Form */}
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <Typography sx={{ minWidth: 100 }}>شماره:</Typography>
+    <Box className="receipts">
+      <Typography variant="h4" gutterBottom>
+        دریافت جدید
+      </Typography>
+      <form onSubmit={handleSubmit}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6}>
+            <Box display="flex" alignItems="center" gap={2}>
               <TextField
-                size="small"
-                type="tel"
+                label="شماره رسید"
+                name="receiptNumber"
                 value={formData.receiptNumber}
-                onChange={(e) => setFormData({...formData, receiptNumber: e.target.value})}
-                InputProps={{ readOnly: formData.isAutoNumber }}
-                sx={{ ml: 1 }}
+                onChange={handleChange}
+                disabled={isAutoNumber}
+                fullWidth
               />
-              <Switch
-                checked={formData.isAutoNumber}
-                onChange={(e) => setFormData({...formData, isAutoNumber: e.target.checked})}
-                size="small"
-              />
-            </Box>
-          </Grid>
-          
-          <Grid item xs={12} md={6}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <Typography sx={{ minWidth: 100 }}>تاریخ:</Typography>
-              <TextField
-                size="small"
-                type="date"
-                value={formData.date}
-                onChange={(e) => setFormData({...formData, date: e.target.value})}
-                sx={{ ml: 1 }}
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={isAutoNumber}
+                    onChange={handleAutoNumberChange}
+                  />
+                }
+                label="شماره خودکار"
               />
             </Box>
           </Grid>
 
-          {/* Receipt Items */}
-          <Grid item xs={12}>
-            <Typography variant="h6" sx={{ mb: 2 }}>آیتم‌های دریافت</Typography>
-            {items.map((item) => (
-              <Box key={item.id} sx={{ display: 'flex', gap: 2, mb: 2, alignItems: 'center' }}>
-                <Typography>{item.id}.</Typography>
-                <TextField
-                  select
-                  label="شخص"
-                  value={item.person}
-                  onChange={(e) => handleItemChange(item.id, 'person', e.target.value)}
-                  size="small"
-                  sx={{ minWidth: 200 }}
-                >
-                  {persons.map((person) => (
-                    <option key={person.id} value={person.id}>
-                      {person.name}
-                    </option>
-                  ))}
-                </TextField>
-                <TextField
-                  type="number"
-                  label="مبلغ"
-                  value={item.amount}
-                  onChange={(e) => handleItemChange(item.id, 'amount', e.target.value)}
-                  size="small"
-                />
-                <TextField
-                  label="شرح"
-                  value={item.description}
-                  onChange={(e) => handleItemChange(item.id, 'description', e.target.value)}
-                  size="small"
-                  sx={{ flexGrow: 1 }}
-                />
-                <IconButton
-                  color="error"
-                  onClick={() => handleRemoveItem(item.id)}
-                  disabled={items.length === 1}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </Box>
-            ))}
-            <Button
-              startIcon={<AddIcon />}
-              onClick={handleAddItem}
-              variant="outlined"
-              color="primary"
-              sx={{ mt: 2 }}
+          <Grid item xs={12} sm={6}>
+            <Box display="flex" alignItems="center" gap={2}>
+              <TextField
+                select
+                fullWidth
+                label="پروژه"
+                name="project"
+                value={formData.project}
+                onChange={handleChange}
+              >
+                {projects.map((project) => (
+                  <MenuItem key={project.id} value={project.id}>
+                    {project.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <IconButton color="primary" onClick={() => setProjectDialogOpen(true)}>
+                <AddIcon />
+              </IconButton>
+            </Box>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              select
+              label="شخص"
+              name="person"
+              value={formData.person}
+              onChange={handleChange}
+              required
             >
-              افزودن آیتم
+              {persons.map((person) => (
+                <MenuItem key={person.id} value={person.id}>
+                  {person.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <Box display="flex" alignItems="center" gap={2}>
+              <TextField
+                select
+                fullWidth
+                label="واحد پول"
+                name="currency"
+                value={formData.currency}
+                onChange={handleChange}
+              >
+                {currencies.map((currency) => (
+                  <MenuItem key={currency.id} value={currency.id}>
+                    {currency.name} ({currency.symbol})
+                  </MenuItem>
+                ))}
+              </TextField>
+              <IconButton color="primary" onClick={() => setCurrencyDialogOpen(true)}>
+                <AddIcon />
+              </IconButton>
+            </Box>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="مبلغ"
+              name="amount"
+              value={formData.amount}
+              onChange={handleChange}
+              type="number"
+              required
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="تاریخ"
+              name="date"
+              type="date"
+              value={formData.date}
+              onChange={handleChange}
+              required
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="توضیحات"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              multiline
+              rows={3}
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <Button type="submit" variant="contained" color="primary">
+              ثبت دریافت
             </Button>
           </Grid>
-
-          {/* Summary */}
-          <Grid item xs={12}>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-              <Typography variant="h6" sx={{ ml: 2 }}>
-                مجموع: {getTotalAmount().toLocaleString()} ریال
-              </Typography>
-            </Box>
-          </Grid>
         </Grid>
-      </Paper>
+      </form>
+
+      <ProjectDialog
+        open={projectDialogOpen}
+        handleClose={() => setProjectDialogOpen(false)}
+        onSave={handleAddProject}
+      />
+
+      <CurrencyDialog
+        open={currencyDialogOpen}
+        handleClose={() => setCurrencyDialogOpen(false)}
+        onSave={handleAddCurrency}
+      />
     </Box>
   );
 }
 
-export default Receipt;
+export default Receipts;

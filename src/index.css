@@ -1,7 +1,15 @@
-/* استفاده از CDN */
-@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
 
+@font-face {
+  font-family: 'AnjomanMax-Regular';
+  src: url('assets/fonts/anjoman/AnjomanMax-Regular.eot');
+  src: url('assets/fonts/anjoman/AnjomanMax-Regular.eot?#iefix') format('embedded-opentype'),
+       url('assets/fonts/anjoman/AnjomanMax-Regular.woff2') format('woff2'),
+       url('assets/fonts/anjoman/AnjomanMax-Regular.woff') format('woff'),
+       url('assets/fonts/anjoman/AnjomanMax-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 body {
   margin: 0;
-  font-family: 'Vazir', sans-serif;
+  font-family: 'AnjomanMax-Regular', sans-serif;
 }

@@ -1,11 +1,11 @@
 
 @font-face {
-  font-family: 'Vazir';
-  src: url('../fonts//Vazir.eot');
-  src: url('../fonts/Vazir.eot?#iefix') format('embedded-opentype'),
-       url('../fonts//Vazir.woff2') format('woff2'),
-       url('../fonts//Vazir.woff') format('woff'),
-       url('../fonts//Vazir.ttf') format('truetype');
+  font-family: 'AnjomanMax-Regular';
+  src: url('../fonts/anjoman/AnjomanMax-Regular.eot');
+  src: url('../fonts/anjoman/AnjomanMax-Regular.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/anjoman/AnjomanMax-Regular.woff2') format('woff2'),
+       url('../fonts/anjoman/AnjomanMax-Regular.woff') format('woff'),
+       url('../fonts/anjoman/AnjomanMax-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -13,7 +13,7 @@
 
 /* استایل‌های عمومی */
 * {
-  font-family: 'Vazir', Tahoma, Arial !important;
+  font-family: 'AnjomanMax-Regular', Tahoma, Arial !important;
 }
 
 body {
@@ -150,7 +150,7 @@ body {
 
 /* استایل‌های SweetAlert2 */
 .swal2-popup {
-  font-family: 'Vazir', Tahoma, Arial !important;
+  font-family: 'AnjomanMax-Regular', Tahoma, Arial !important;
   border-radius: 12px !important;
 }
 

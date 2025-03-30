@@ -10,7 +10,7 @@ import Receipts from './pages/Receipts';
 import ReceiptsList from './pages/ReceiptsList';
 import Payments from './pages/Payments';
 import './App.css';
-import Receipt from './pages/Receipt'; // اضافه کردن import
+import Receipt from './pages/Receipts'; // اضافه کردن import
 function App() {
   const [persons, setPersons] = useState([
     {

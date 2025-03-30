@@ -47,7 +47,7 @@ function Dashboard({ persons, invoices, receipts, payments, checks, exchangeRate
         align: 'center',
         style: {
           fontSize: '16px',
-          fontFamily: 'vazir'
+          fontFamily: 'AnjomanMax-Regular'
         }
       }
     },
@@ -73,7 +73,7 @@ function Dashboard({ persons, invoices, receipts, payments, checks, exchangeRate
         align: 'center',
         style: {
           fontSize: '16px',
-          fontFamily: 'vazir'
+          fontFamily: 'AnjomanMax-Regular'
         }
       },
       xaxis: {
@@ -106,7 +106,7 @@ function Dashboard({ persons, invoices, receipts, payments, checks, exchangeRate
         align: 'center',
         style: {
           fontSize: '16px',
-          fontFamily: 'vazir'
+          fontFamily: 'AnjomanMax-Regular'
         }
       },
       legend: {
@@ -130,7 +130,7 @@ function Dashboard({ persons, invoices, receipts, payments, checks, exchangeRate
         align: 'center',
         style: {
           fontSize: '16px',
-          fontFamily: 'vazir'
+          fontFamily: 'AnjomanMax-Regular'
         }
       },
       xaxis: {
